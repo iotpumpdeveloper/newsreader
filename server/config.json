@@ -1,7 +1,7 @@
 {
   "newsSource" : {
     "apiEndPoint" : "https://newsapi.org/v1/articles",
-    "apiKey" : "f6ea060b4e0d4f41b2846f5d6703b19b"
+    "apiKey" : "d6ba73b5131643b1a99858bdfedb26cc"
   },
   "publisherServer" : {
     "host" : "127.0.0.1",
