@@ -3,7 +3,7 @@
     "apiEndPoint" : "https://newsapi.org/v1/articles",
     "apiKey" : "d6ba73b5131643b1a99858bdfedb26cc"
   },
-  "publisherServer" : {
+  "publishingServer" : {
     "host" : "127.0.0.1",
     "port" : 3000,
     "secretKey" : "hpD65L4q0s59SfJbbsBl3xxUnAiPGM2WH6G5NE070mG16SwE"
