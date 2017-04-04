@@ -1,3 +1,3 @@
 # newsreader
 A websocket based news reading application
-powered by: [a link](https://newsapi.org/)
+powered by: [News API](https://newsapi.org/)
