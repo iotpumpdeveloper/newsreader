@@ -30,8 +30,8 @@ function connectBroadcastingServers()
   var webSockets = [];
   var i = 0;
   for (var serverName in config.broadcastingServers) {
-    var incomingDataChannel = EncryptionUtil.get_sha512(config.publisherServer.secretKey + config.broadcastingServers[serverName].secretKey);
-    var wsUrl = 'ws://' + config.broadcastingServers[serverName].host + ':' + config.broadcastingServers[serverName].port + '/' + incomingDataChannel;
+    var publishingDataChannel = EncryptionUtil.get_sha512(config.publisherServer.secretKey + config.broadcastingServers[serverName].secretKey);
+    var wsUrl = 'ws://' + config.broadcastingServers[serverName].host + ':' + config.broadcastingServers[serverName].port + '/' + publishingDataChannel;
     if (webSockets[i] == null || webSockets[i].readyState == 3) { //when the websocket connection is closed, we try to create a new one again
       webSockets[i] = new WebSocket(wsUrl, {
         perMessageDeflate: false
