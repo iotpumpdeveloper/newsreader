@@ -90,7 +90,6 @@ class PublishingServer
     setInterval( () => {
       var webSockets = this.connectToBroadcastingServersOnChannel(channel);
       this.getLatestNews((message) => {
-        console.log(message.source);
         for (var i = 0; i < webSockets.length; i++) {
           var ws = webSockets[i];
           ws.send( JSON.stringify(message) , (error) => {

@@ -15,12 +15,22 @@ class BroadCastingServer
   start()
   {
     var config = this.config;
-    var channel = 'latestnews'; //the public channel
     var incomingDataChannel = CrossServerChannel
-      .name(channel)
+      .name('latestnews')
       .from(config.publishingServer)
       .to(config.broadcastingServers[this.serverName])
       .getName();
+
+    var incomingDataChannelUrl = '/' + incomingDataChannel;
+
+    //now define a list of public channels that mapped to different news source
+    var newsSources = config.newsSource.sources;
+   
+    var publicChannelUrls = {};
+    for (var i = 0; i < newsSources.length; i ++) {
+      var url = '/' + newsSources[i];
+      publicChannelUrls[url] = 1;
+    }
 
     var webSocketServer = new WebSocket.Server({
       perMessageDeflate: false,
@@ -29,13 +39,17 @@ class BroadCastingServer
 
     webSocketServer.on('connection', (ws) => {
       ws.on('message', (message) => {
-        if (ws.upgradeReq.url == '/' + incomingDataChannel) { //this is coming from the publishing server 
+        if (ws.upgradeReq.url == incomingDataChannelUrl) { //this is coming from the publishing server 
           //now we have the latest news, broadcast to all public clients who subscribe to the public channel
           webSocketServer.clients.forEach(function(client) {
-            if (client.readyState == WebSocket.OPEN && client.upgradeReq.url == '/' + channel) { //now this client really subscribe to the public channel
+            if (client.readyState == WebSocket.OPEN && publicChannelUrls[client.upgradeReq.url] == 1) { //now this client really subscribe to the public channel
+              //now make sure we just send the correct message depends on the channel url 
+              var messageObj = JSON.parse(message);
+              if ('/' + messageObj.source ==  client.upgradeReq.url) {
                 client.send(message);
-            } else if (client.upgradeReq.url != '/' + incomingDataChannel) { //this client not subscribe to any public channel, and it is not the publisher server itself, so it should not allow any data to send, we will simply close it 
-                client.close();
+              }
+            } else if (client.upgradeReq.url != incomingDataChannelUrl) { //this client not subscribe to any public channel, and it is not the publisher server itself, so it should not allow any data to send, we will simply close it 
+              client.close();
             }
           }); 
         } 
