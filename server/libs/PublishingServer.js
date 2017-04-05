@@ -62,66 +62,40 @@ class PublishingServer
     return webSockets;
   }
 
-  getLatestNews(source, successCallback) {
+  async getLatestNews(successCallback) {
     var config = this.config;
-    var newsApiUrl = config.newsSource.apiEndPoint + '?source=' + source + '&apiKey=' + config.newsSource.apiKey;
-    axios.get(newsApiUrl)
-      .then( (response) => {
-        var response_checkers = [
-          () => {
-            if (response.data == undefined) {
-              throw new Error("no data in response!");
-            }
-          },
-          () => {
-            if (response.data.status != 'ok') {
-              throw new Error("data status is not ok!");
-            }
-          },
-          () => {
-            if (response.data.articles == undefined) {
-              throw new Error ("no articles found in response data!");
-            }
-          },
-          () => {
-            if (! (response.data.articles instanceof Array) ) {
-              throw new Error("invalid articles field in data!");
-            }
-          }
-        ];
+    var newsSources = config.newsSource.sources;
+    this.latestNews = {}; 
+    try { 
+      for (var i = 0; i < newsSources.length; i ++) {
+        var source = newsSources[i];
+        this.latestNews[source] = {data : null};
+        var newsApiUrl = config.newsSource.apiEndPoint + '?source=' + source + '&apiKey=' + config.newsSource.apiKey;
+        var response = await axios.get(newsApiUrl);
+        this.latestNews[source] = response.data.articles; 
+      }
+      successCallback(this.latestNews);
+    } catch (error) {
 
-        for (var k in response_checkers) {
-          if (response_checkers[k]() === false) {
-            return;
-          }
-        }
-        successCallback(response.data.articles);
-      }).catch( (error) => { //catch errors in the promise
-        console.log("News Fetching Error: " + error);
-      });
+    }
   }
 
   start() 
   {
     var config = this.config;
     //start publishing to the broadcasting server 
-    var newsSources = config.newsSource.sources;
-    for (var channel in newsSources) {
-      setInterval( () => {
-        var webSockets = this.connectToBroadcastingServersOnChannel(channel);
-        this.getLatestNews(channel, function(articles){
-          for (var i = 0; i < webSockets.length; i++) {
-            var ws = webSockets[i];
-            var message = {
-              data : articles
+    var channel = "latestnews";
+    setInterval( () => {
+      var webSockets = this.connectToBroadcastingServersOnChannel(channel);
+      this.getLatestNews((latestNews) => {
+        for (var i = 0; i < webSockets.length; i++) {
+          var ws = webSockets[i];
+          ws.send( JSON.stringify(latestNews) , (error) => {
+            if (error) {
             }
-            ws.send( JSON.stringify(message) , (error) => {
-              if (error) {
-              }
-            }); 
-          }
-        });
-      }, newsSources[channel].updateInterval + Math.ceil(Math.random() * 10));
-    }
+          }); 
+        }
+      });
+    }, config.newsSource.updateInterval);
   }
 }

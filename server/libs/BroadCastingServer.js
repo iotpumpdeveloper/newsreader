@@ -15,7 +15,7 @@ class BroadCastingServer
   {
     var config = this.config;
     var incomingDataChannel = CrossServerChannel
-      .name('hacker-news')
+      .name('latestnews')
       .from(config.publishingServer)
       .to(config.broadcastingServers[this.serverName])
       .getName();
@@ -28,8 +28,11 @@ class BroadCastingServer
     });
 
     incomingDataListener.on('connection', function connection(ws) {
-      ws.on('message', function(message) {
-        console.log('received: %s', message);
+      ws.on('message', function(latestNews) {
+        var articles = JSON.parse(latestNews);
+        articles['hacker-news'].forEach((article) => {
+          console.log(article.url);
+        });
       });
     });
 
