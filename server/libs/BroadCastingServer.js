@@ -33,10 +33,10 @@ class BroadCastingServer
           var latestNews = message;
           //now we have the latest news, broadcast to all public clients who subscribe to the public channel
           webSocketServer.clients.forEach(function(client) {
-            if (client.readyState == WebSocket.OPEN) {
-              if (client.upgradeReq.url == '/' + channel) { //now this client really subscribe to the public channel
+            if (client.readyState == WebSocket.OPEN && client.upgradeReq.url == '/' + channel) { //now this client really subscribe to the public channel
                 client.send(JSON.stringify(latestNews));
-              }
+            } else { //this client should not allow any data to send, we will simply close it 
+                client.close();
             }
           }); 
         } 
