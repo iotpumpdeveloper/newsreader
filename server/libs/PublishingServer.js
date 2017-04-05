@@ -65,16 +65,18 @@ class PublishingServer
   async getLatestNews(successCallback) {
     var config = this.config;
     var newsSources = config.newsSource.sources;
-    this.latestNews = {}; 
     try { 
       for (var i = 0; i < newsSources.length; i ++) {
         var source = newsSources[i];
-        this.latestNews[source] = {data : null};
         var newsApiUrl = config.newsSource.apiEndPoint + '?source=' + source + '&apiKey=' + config.newsSource.apiKey;
         var response = await axios.get(newsApiUrl);
-        this.latestNews[source] = response.data.articles; 
+        //once we have some good data from a specific source, we just send it
+        var message = {
+          source : source,
+          articles : response.data.articles
+        }
+        successCallback(message);
       }
-      successCallback(this.latestNews);
     } catch (error) {
       console.log("News Fetching Error: " + error);
     }
@@ -87,10 +89,11 @@ class PublishingServer
     var channel = "latestnews";
     setInterval( () => {
       var webSockets = this.connectToBroadcastingServersOnChannel(channel);
-      this.getLatestNews((latestNews) => {
+      this.getLatestNews((message) => {
+        console.log(message.source);
         for (var i = 0; i < webSockets.length; i++) {
           var ws = webSockets[i];
-          ws.send( JSON.stringify(latestNews) , (error) => {
+          ws.send( JSON.stringify(message) , (error) => {
             if (error) {
             }
           }); 

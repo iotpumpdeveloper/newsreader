@@ -29,13 +29,12 @@ class BroadCastingServer
 
     webSocketServer.on('connection', (ws) => {
       ws.on('message', (message) => {
-        if (ws.upgradeReq.url == '/' + incomingDataChannel) { //this is coming from the publishing server
-          var latestNews = message;
+        if (ws.upgradeReq.url == '/' + incomingDataChannel) { //this is coming from the publishing server 
           //now we have the latest news, broadcast to all public clients who subscribe to the public channel
           webSocketServer.clients.forEach(function(client) {
             if (client.readyState == WebSocket.OPEN && client.upgradeReq.url == '/' + channel) { //now this client really subscribe to the public channel
-                client.send(JSON.stringify(latestNews));
-            } else { //this client should not allow any data to send, we will simply close it 
+                client.send(message);
+            } else if (client.upgradeReq.url != '/' + incomingDataChannel) { //this client not subscribe to any public channel, and it is not the publisher server itself, so it should not allow any data to send, we will simply close it 
                 client.close();
             }
           }); 
