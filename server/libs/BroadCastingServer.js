@@ -9,6 +9,7 @@ class BroadCastingServer
   {
     this.serverName = serverName;
     this.config = Config.get();
+    this.latestNews = {};
   }
 
   start()
@@ -20,22 +21,32 @@ class BroadCastingServer
       .to(config.broadcastingServers[this.serverName])
       .getName();
 
-    //liste to incoming message
+    //start exposing public channel to all clients
+    var channel = 'latestnews';
+    var publicWebSocketServer = new WebSocket.Server({
+      perMessageDeflate: false,
+      port: config.broadcastingServers[this.serverName]['port.external'],
+      path: '/' + channel 
+    });
+
+    //listen to incoming message
     var incomingDataListener = new WebSocket.Server({
       perMessageDeflate: false,
-      port: config.broadcastingServers[this.serverName].port,
+      port: config.broadcastingServers[this.serverName]['port.internal'],
       path: '/' + incomingDataChannel 
     });
 
-    incomingDataListener.on('connection', function connection(ws) {
-      ws.on('message', function(latestNews) {
-        var articles = JSON.parse(latestNews);
-        articles['hacker-news'].forEach((article) => {
-          console.log(article.url);
+    incomingDataListener.on('connection', (ws) => {
+      ws.on('message', (latestNews) => {
+        //now we have the latest news, broadcast to all public clients
+        publicWebSocketServer.clients.forEach(function(client) {
+          if (client.readyState == WebSocket.OPEN) {
+            client.send(JSON.stringify(latestNews));
+          }
         });
       });
     });
 
-    console.log("Broadcasting server started at port " + config.broadcastingServers[this.serverName].port);
+    console.log("Broadcasting server started at port " + config.broadcastingServers[this.serverName]['port.internal']);
   }
 }
