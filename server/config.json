@@ -1,7 +1,12 @@
 {
   "newsSource" : {
     "apiEndPoint" : "https://newsapi.org/v1/articles",
-    "apiKey" : "d6ba73b5131643b1a99858bdfedb26cc"
+    "apiKey" : "d6ba73b5131643b1a99858bdfedb26cc",
+    "sources" : {
+      "hacker-news" : {
+        "updateInterval" : 5
+      }
+    }
   },
   "publishingServer" : {
     "host" : "127.0.0.1",

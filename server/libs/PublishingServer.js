@@ -31,14 +31,14 @@ class PublishingServer
     this.config = Config.get();
   }
 
-  connectToBroadcastingServers()
+  connectToBroadcastingServersOnChannel(channelName)
   {
     var config = this.config;
     var webSockets = [];
     var i = 0;
     for (var serverName in config.broadcastingServers) {
       var publishingDataChannel = CrossServerChannel
-        .name('latestnews')
+        .name(channelName)
         .from(config.publishingServer)
         .to(config.broadcastingServers[serverName])
         .getName();
@@ -103,21 +103,25 @@ class PublishingServer
 
   start() 
   {
+    var config = this.config;
     //start publishing to the broadcasting server 
-    setInterval( () => {
-      var webSockets = this.connectToBroadcastingServers();
-      this.getLatestNews('hacker-news', function(articles){
-        for (var i = 0; i < webSockets.length; i++) {
-          var ws = webSockets[i];
-          var message = {
-            data : articles
-          }
-          ws.send( JSON.stringify(message) , (error) => {
-            if (error) {
+    var newsSources = config.newsSource.sources;
+    for (var channel in newsSources) {
+      setInterval( () => {
+        var webSockets = this.connectToBroadcastingServersOnChannel(channel);
+        this.getLatestNews(channel, function(articles){
+          for (var i = 0; i < webSockets.length; i++) {
+            var ws = webSockets[i];
+            var message = {
+              data : articles
             }
-          }); 
-        }
-      });
-    }, 5000);
+            ws.send( JSON.stringify(message) , (error) => {
+              if (error) {
+              }
+            }); 
+          }
+        });
+      }, newsSources[channel].updateInterval + Math.ceil(Math.random() * 10));
+    }
   }
 }

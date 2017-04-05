@@ -15,7 +15,7 @@ class BroadCastingServer
   {
     var config = this.config;
     var incomingDataChannel = CrossServerChannel
-      .name('latestnews')
+      .name('hacker-news')
       .from(config.publishingServer)
       .to(config.broadcastingServers[this.serverName])
       .getName();
