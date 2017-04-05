@@ -76,7 +76,7 @@ class PublishingServer
       }
       successCallback(this.latestNews);
     } catch (error) {
-
+      console.log("News Fetching Error: " + error);
     }
   }
 
