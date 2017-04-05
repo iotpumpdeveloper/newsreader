@@ -42,13 +42,13 @@ class PublishingServer
         .from(config.publishingServer)
         .to(config.broadcastingServers[serverName])
         .getName();
-      var wsUrl = 'ws://' + config.broadcastingServers[serverName].host + ':' + config.broadcastingServers[serverName]['port.internal'] + '/' + publishingDataChannel;
+      var wsUrl = 'ws://' + config.broadcastingServers[serverName].host + ':' + config.broadcastingServers[serverName].port + '/' + publishingDataChannel;
       if (webSockets[i] == null || webSockets[i].readyState == 3) { //when the websocket connection is closed, we try to create a new one again
         webSockets[i] = new WebSocket(wsUrl, {
           perMessageDeflate: false
         }); 
         webSockets[i].setHost(config.broadcastingServers[serverName].host);
-        webSockets[i].setPort(config.broadcastingServers[serverName]['port.internal']);
+        webSockets[i].setPort(config.broadcastingServers[serverName].port);
       }
       //catch connection error
       webSockets[i].on('error', function(error){

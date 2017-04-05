@@ -2,7 +2,7 @@
   "newsSource" : {
     "apiEndPoint" : "https://newsapi.org/v1/articles",
     "apiKey" : "d6ba73b5131643b1a99858bdfedb26cc",
-    "updateInterval" : 5000,
+    "updateInterval" : 2000,
     "sources" : [
       "hacker-news", 
       "cnn",
@@ -17,20 +17,17 @@
   "broadcastingServers" : {
     "s1" : {
       "host" : "127.0.0.1",
-      "port.internal" : 3001,
-      "port.external" : 4001,
+      "port" : 3001,
       "secretKey" : "sl9B84I452nKki6YASPvJghWXLuuPQB8x4fe6MU59b5Th413"
     },
     "s2" : {
       "host" : "127.0.0.1",
-      "port.internal" : 3002,
-      "port.external" : 4002,
+      "port" : 3002,
       "secretKey" : "9pr1uqZ7RMsCfPawMoo5gAOUlRFftOv653G8TvB4kuCg1145"
     },
     "s3" : {
       "host" : "127.0.0.1",
-      "port.internal" : 3003,
-      "port.external" : 4003,
+      "port" : 3003,
       "secretKey" : "cTKJ5Yni16O6Bc7pI3wWm88x6IChxl62hy6Ap3SAf7J23nNx"
     }
   }

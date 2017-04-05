@@ -15,38 +15,34 @@ class BroadCastingServer
   start()
   {
     var config = this.config;
+    var channel = 'latestnews'; //the public channel
     var incomingDataChannel = CrossServerChannel
-      .name('latestnews')
+      .name(channel)
       .from(config.publishingServer)
       .to(config.broadcastingServers[this.serverName])
       .getName();
 
-    //start exposing public channel to all clients
-    var channel = 'latestnews';
-    var publicWebSocketServer = new WebSocket.Server({
+    var webSocketServer = new WebSocket.Server({
       perMessageDeflate: false,
-      port: config.broadcastingServers[this.serverName]['port.external'],
-      path: '/' + channel 
+      port: config.broadcastingServers[this.serverName].port,
     });
 
-    //listen to incoming message
-    var incomingDataListener = new WebSocket.Server({
-      perMessageDeflate: false,
-      port: config.broadcastingServers[this.serverName]['port.internal'],
-      path: '/' + incomingDataChannel 
-    });
-
-    incomingDataListener.on('connection', (ws) => {
-      ws.on('message', (latestNews) => {
-        //now we have the latest news, broadcast to all public clients
-        publicWebSocketServer.clients.forEach(function(client) {
-          if (client.readyState == WebSocket.OPEN) {
-            client.send(JSON.stringify(latestNews));
-          }
-        });
+    webSocketServer.on('connection', (ws) => {
+      ws.on('message', (message) => {
+        if (ws.upgradeReq.url == '/' + incomingDataChannel) { //this is coming from the publishing server
+          var latestNews = message;
+          //now we have the latest news, broadcast to all public clients who subscribe to the public channel
+          webSocketServer.clients.forEach(function(client) {
+            if (client.readyState == WebSocket.OPEN) {
+              if (client.upgradeReq.url == '/' + channel) { //now this client really subscribe to the public channel
+                client.send(JSON.stringify(latestNews));
+              }
+            }
+          }); 
+        } 
       });
     });
 
-    console.log("Broadcasting server started at port " + config.broadcastingServers[this.serverName]['port.internal']);
+    console.log("Broadcasting server started at port " + config.broadcastingServers[this.serverName].port);
   }
 }
