@@ -44,7 +44,7 @@ class BroadCastingServer
             if (client.readyState == WebSocket.OPEN && publicChannelUrls[client.upgradeReq.url] == 1) { //now this client really subscribe to the public channel
               //now make sure we just send the correct message depends on the channel url 
               var messageObj = JSON.parse(message);
-              if ('/' + messageObj.source ==  client.upgradeReq.url) {
+              if (client.upgradeReq.url == '/' + messageObj.source) {
                 client.send(message);
               }
             } else if (client.upgradeReq.url != incomingDataChannelUrl) { //this client not subscribe to any public channel, and it is not the publisher server itself, so it should not allow any data to send, we will simply close it 
