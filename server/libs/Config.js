@@ -4,8 +4,10 @@
 module.exports = 
 class Config 
 {
-  static init(configJSON)
+  static init(configFilePath)
   {
+    var fs = require('fs');
+    var configJSON = fs.readFileSync(configFilePath).toString();
     this.config = JSON.parse(configJSON);
   }
 
