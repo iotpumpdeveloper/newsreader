@@ -1,4 +1,5 @@
 {
+  "crossServerChannelSecureKey" : "HX5xa44J5A53rMs7CtLCSG9dW23XrXGjmVeTzmpKcNu7HWfN5wtcrGY82BwFJZpMMbEYfuDvWHLhENkm2QZbvRxPU3nJjWNR8AUdwvG8gnQ97n3UPP8GTY5PJbMkrgpdRJcgEYcV9uRQZC6DzXNaGz5gMKyBLKsN5uNjxRh2SznDeRtvRRLMTreh5QQDcFCr4Zk59j9qCbebuZVBWtaY4ZBXd2wzPFF7WkMvPtsv3WWsvujAjXx8rfh56NgZBCKy",
   "newsSource" : {
     "apiEndPoint" : "https://newsapi.org/v1/articles",
     "apiKey" : "d6ba73b5131643b1a99858bdfedb26cc",
@@ -11,24 +12,20 @@
   },
   "publishingServer" : {
     "host" : "127.0.0.1",
-    "port" : 3000,
-    "secretKey" : "hpD65L4q0s59SfJbbsBl3xxUnAiPGM2WH6G5NE070mG16SwE"
+    "port" : 3000
   },
   "broadcastingServers" : {
     "s1" : {
       "host" : "127.0.0.1",
-      "port" : 3001,
-      "secretKey" : "sl9B84I452nKki6YASPvJghWXLuuPQB8x4fe6MU59b5Th413"
+      "port" : 3001
     },
     "s2" : {
       "host" : "127.0.0.1",
-      "port" : 3002,
-      "secretKey" : "9pr1uqZ7RMsCfPawMoo5gAOUlRFftOv653G8TvB4kuCg1145"
+      "port" : 3002
     },
     "s3" : {
       "host" : "127.0.0.1",
-      "port" : 3003,
-      "secretKey" : "cTKJ5Yni16O6Bc7pI3wWm88x6IChxl62hy6Ap3SAf7J23nNx"
+      "port" : 3003
     }
   }
 }

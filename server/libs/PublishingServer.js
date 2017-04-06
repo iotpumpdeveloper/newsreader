@@ -38,7 +38,6 @@ class PublishingServer
     var i = 0;
     for (var serverName in config.broadcastingServers) {
       var publishingDataChannel = CrossServerChannel
-        .name(channelName)
         .from(config.publishingServer)
         .to(config.broadcastingServers[serverName])
         .getName();

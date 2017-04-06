@@ -1,6 +1,6 @@
 /**
  * The cross server channel represents a web socket channel established from server A to server B
- * sample usage: CrossServerChannel.name('latestnews').from({
+ * sample usage: CrossServerChannel.from({
  *   'host' : '***',
  *   'port' : '***',
  *   'secretKey' : '***'
@@ -16,13 +16,6 @@ const EncryptionUtil = require('./EncryptionUtil');
 module.exports = 
 class CrossServerChannel
 {
-  static name(channelName)
-  {
-    var config = require('./Config').get();
-    this.channelName = channelName;
-    return this;
-  }
-
   static from(serverInfo) 
   {
     this.fromServerInfo = serverInfo;
@@ -37,7 +30,12 @@ class CrossServerChannel
   
   static getName()
   {
-    var result = EncryptionUtil.get_sha512(this.fromServerInfo.secretKey + this.toServerInfo.secretKey + this.channelName);
+    var config = require('./Config').get();
+    var result = EncryptionUtil.get_sha512(
+      JSON.stringify(this.fromServerInfo) 
+      + config.crossServerChannelSecureKey
+      + JSON.stringify(this.toServerInfo)
+    )
     return result;
   }
 }
