@@ -9,7 +9,6 @@ class BroadCastingServer
   {
     this.serverName = serverName;
     this.config = Config.get();
-    this.latestNews = {};
   }
 
   start()
