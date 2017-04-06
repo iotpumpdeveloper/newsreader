@@ -3,11 +3,9 @@
  * sample usage: CrossServerChannel.from({
  *   'host' : '***',
  *   'port' : '***',
- *   'secretKey' : '***'
  * }).to({
  *   'host' : '***',
  *   'port' : '***',
- *   'secretKey' : '***'
  * }).getName()
  */
 
