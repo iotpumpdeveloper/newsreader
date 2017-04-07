@@ -15,6 +15,7 @@ class WebSocketServer
   constructor(serverName)
   {
     var config = Config.get();
+    this.config = config;
     this.host = config.servers[serverName].host;
     this.port = config.servers[serverName].port;
     this.secretKey = config.servers[serverName].secretKey;
@@ -32,6 +33,16 @@ class WebSocketServer
   {
     var channel = new WebSocketServerChannel(this.serverName, channelName);
     this.channels[channelName] = channel;
+  }
+
+  getIDCChannel()
+  {
+    return this.idc;
+  }
+
+  getChannel(name)
+  {
+    return this.channels[name];
   }
 
   /**
@@ -52,9 +63,9 @@ class WebSocketServer
         this._serverInstance.clients.forEach((client) => {
           var clientChannelName = client.upgradeReq.url.slice(1);
           if (clientChannelName == this.idc.getName() && client.readyState == ws.OPEN) {
-            this.handleIDCClient(client);
+            this.idc.handleIncomingClient(client);
           } else if (clientChannelName in this.channels && client.readyState == ws.OPEN) {
-            this.handleChannelClient(client);
+            this.channels[clientChannelName].handleIncomingClient(client);
           } else { //all other clients are considered invalid, we just close them
             client.close(); 
           }
@@ -71,10 +82,3 @@ class WebSocketServer
     //this._serverInstance.close();
   }
 }
-
-//test
-Config.init('../config.json');
-var server = new module.exports('s0');
-server.addChannel('abc');
-server.addChannel('efg');
-server.start();

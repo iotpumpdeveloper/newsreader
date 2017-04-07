@@ -3,29 +3,22 @@
  * Usage: InternalDataChannel.forServer('s1').getName()
  */
 const EncryptionUtil = require('./EncryptionUtil');
+const WebSocketServerChannel = require('./WebSocketServerChannel');
 
 module.exports = 
-class InternalDataChannel
+class InternalDataChannel extends WebSocketServerChannel
 {
-  static forServer(serverName)
-  {
-    this.serverName = serverName;
-    return this;
-  }
 
-  static getName()
+  constructor(serverName)
   {
     var config = require('./Config').get();
-    var serverInfo = config.servers[this.serverName];
-    serverInfo.name = this.serverName;
+    var serverInfo = config.servers[serverName];
+    serverInfo.name = serverName;
 
-    var name = EncryptionUtil.get_sha512(
+    var channelName = EncryptionUtil.get_sha512(
       JSON.stringify(serverInfo)
     );
-    return name;
+
+    super(serverName, channelName);
   }
 }
-
-//test
-require('./Config').init('../config.json');
-console.log(module.exports.forServer('s0').getName());
