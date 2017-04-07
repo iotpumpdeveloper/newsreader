@@ -8,6 +8,7 @@ class WebSocketServerChannel
   {
     this.serverName = serverName;
     this.channelName = channelName;
+    this.connectedClients = []; //store all connected clients here
   }
 
   getName()
@@ -15,7 +16,27 @@ class WebSocketServerChannel
     return this.channelName;
   }
 
+
+
+  addConnectedClient(client)
+  {
+    this.connectedClients.push(client);
+  }
+
+  broadcast(message)
+  {
+    for (var i = 0; i < this.connectedClients.length; i ++) {
+      var client = this.connectedClients.pop();
+      if (client.readyState == client.OPEN) { //this is still an active client, send the news data and then put it back
+        this.connectedClients.push(client);
+        client.send(message);
+      } 
+      //otherwise, the client will just be pop out and garbage collected
+    }
+  }
+
   handleIncomingClient(client) 
   {
+
   }
 }

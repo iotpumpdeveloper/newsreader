@@ -8,9 +8,10 @@ class PublishingServer extends WebSocketServer
     super(serverName);
   }
 
-  async getLatestNews(successCallback) {
+  async fetchLatestNews(successCallback) {
     var config = this.config;
     var newsSources = config.newsSource.sources;
+    var axios = require('axios');
     try { 
       for (var i = 0; i < newsSources.length; i ++) {
         var source = newsSources[i];
@@ -28,26 +29,28 @@ class PublishingServer extends WebSocketServer
     }
   }
 
+  getLatestNews()
+  {
+    return this.latestNews;
+  }
+
   start() 
   {
-    //first, start as a websocket server
-    super.start();
-
     var config = this.config;
     //start publishing to the broadcasting server 
     var channel = "latestnews";
     setInterval( () => {
-      console.log('good');
+      this.fetchLatestNews((news) => {
+        this.idc.broadcast(JSON.stringify(news));
+      });
     }, config.newsSource.updateInterval);
+
+    //now start as a websocket server
+    super.start();
   }
 }
 
 //test
 require('./Config').init('../config.json');
 var server = new module.exports('s0');
-server.addChannel('abc');
-server.getChannel('abc').handleIncomingClient = (client) => {
-  client.send('hey, thank you for connecting to channel abc');
-};
-server.addChannel('efg');
 server.start();
