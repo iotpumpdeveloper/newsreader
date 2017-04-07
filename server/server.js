@@ -7,15 +7,21 @@ if (args.length < 3) {
   process.exit();
 }
 
-require('./libs/Config').init('./config.json');
-var PublishingServer = require('./libs/PublishingServer');
-var BroadCastingServer = require('./libs/BroadCastingServer');
+var Config = require('./libs/Config');
+Config.init('./config.json');
 
 var serverName = args[2].trim();
 
 //@TODO: maybe later on we can start the servers in the background... 
-if (serverName == 's0') {
-  new PublishingServer(serverName).start();
-} else {
-  new BroadCastingServer(serverName).start();
+
+var config = Config.get();
+
+if (serverName in config.servers) {
+  if (serverName == 's0') {
+    var PublishingServer = require('./libs/PublishingServer');
+    new PublishingServer(serverName).start();
+  } else{
+    var BroadCastingServer = require('./libs/BroadCastingServer');
+    new BroadCastingServer(serverName).start();
+  }
 }
