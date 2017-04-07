@@ -49,8 +49,3 @@ class PublishingServer extends WebSocketServer
     super.start();
   }
 }
-
-//test
-require('./Config').init('../config.json');
-var server = new module.exports('s0');
-server.start();

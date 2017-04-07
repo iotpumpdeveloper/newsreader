@@ -8,15 +8,14 @@ class WebSocketServerChannel
   {
     this.serverName = serverName;
     this.channelName = channelName;
-    this.connectedClients = []; //store all connected clients here
+    this.connectedClients = []; //store all connected clients here 
+    this.onClientConnected = (client) => {} //this will be triggered when a client websocket is connected
   }
 
   getName()
   {
     return this.channelName;
   }
-
-
 
   addConnectedClient(client)
   {
@@ -33,10 +32,5 @@ class WebSocketServerChannel
       } 
       //otherwise, the client will just be pop out and garbage collected
     }
-  }
-
-  handleIncomingClient(client) 
-  {
-
   }
 }
