@@ -9,7 +9,8 @@ class WebSocketServerChannel
     this.serverName = serverName;
     this.channelName = channelName;
     this.connectedClients = []; //store all connected clients here 
-    this.onClientConnected = (client) => {} //this will be triggered when a client websocket is connected
+    this.onClientConnected = (client) => {} //this will be triggered when a client websocket is connected 
+    this.onMessage = (message, client) => {} //this will be triggered when a client websocket sent a message
   }
 
   getName()
@@ -20,6 +21,10 @@ class WebSocketServerChannel
   addConnectedClient(client)
   {
     this.connectedClients.push(client);
+    //hook up the client's message event 
+    client.on('message', (message) => {
+      this.onMessage(message, client);
+    }); 
   }
 
   broadcast(message)

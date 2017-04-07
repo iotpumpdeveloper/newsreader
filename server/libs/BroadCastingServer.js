@@ -17,6 +17,10 @@ class BroadCastingServer extends WebSocketServer
       this.getChannel('latestnews').broadcast(message);
     });
 
+    this.getChannel('latestnews').onMessage = (message) => {
+      console.log("received message " + message);
+    }
+
     super.start(); //start the web server
   }
 }
