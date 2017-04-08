@@ -45,7 +45,7 @@ class WebSocketServerChannel
           var message = message(client);
           if (typeof message == 'string') {
             client.send(message);
-          }
+          } 
         }
       } 
       //otherwise, the client will just be pop out and garbage collected

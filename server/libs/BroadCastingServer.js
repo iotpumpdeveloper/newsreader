@@ -19,28 +19,42 @@ class BroadCastingServer extends WebSocketServer
   {
     super.start(); //start the web server
 
+    this.news = {};
+
+    this.incomingNewsSource = '';
+
     this.addChannel('livenews');
 
     var idcName = InternalDataChannelName.onServer('s0'); 
 
     var messageFilter = (client) => {
-      if (client.newsSource != undefined && client.newsSource == this.incomingNews.source) {
-        return JSON.stringify(this.incomingNews.articles); 
+      if (
+        this.config.newsSource.sources.includes(client.newsSource)
+        && client.newsSource != undefined 
+        && client.newsSource in this.news
+        && client.newsSource == this.incomingNewsSource
+      ) {
+        return JSON.stringify(this.news[client.newsSource]); 
       } 
     }
 
     var webSocket = new WebSocketServerChannel(this.config.servers['s0'], idcName).connect();
     webSocket.on('message', (message) => {
-      this.incomingNews = JSON.parse(message);
+      var messageObj = JSON.parse(message);
+      this.incomingNewsSource = messageObj.source;
+      this.news[messageObj.source] = messageObj.articles;
       this.getChannel('livenews').broadcast(messageFilter);
     });
 
     this.getChannel('livenews').onMessage = (message, client) => {
-      if (this.config.newsSource.sources.includes(message)) {
-        client.newsSource = message;
-        if (this.incomingNews.source != undefined && this.incomingNews.source == message) { //immediately sent related articles to client
-          client.send(JSON.stringify(this.incomingNews.articles));
-        }
+      client.newsSource = message;
+      if (this.config.newsSource.sources.includes(client.newsSource)) {
+        var m = messageFilter(client);
+        if (typeof m == 'string') {
+          client.send(m);
+        } 
+      } else { //invalid news source, just close the client 
+        client.close();
       }
     };
 
