@@ -43,6 +43,7 @@ class BroadCastingServer extends WebSocketServer
         if ( this.news[source] == undefined || this.news[source] != incomingNews[source] ) {
           this.news[source] = incomingNews[source];
           shouldBroadcast = true;
+          console.log('updated source: ' + source);
         } 
       }
 

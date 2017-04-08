@@ -2,7 +2,7 @@
   "newsSource" : {
     "apiEndPoint" : "https://newsapi.org/v1/articles",
     "apiKey" : "d6ba73b5131643b1a99858bdfedb26cc",
-    "updateInterval" : 5000,
+    "updateInterval" : 1000,
     "sources" : [
       "hacker-news", 
       "cnn",
@@ -11,7 +11,11 @@
       "fortune",
       "espn",
       "newsweek",
-      "nfl-news"
+      "nfl-news",
+      "usa-today",
+      "fox-sports",
+      "financial-times",
+      "google-news"
     ]
   },
   "servers" : {
