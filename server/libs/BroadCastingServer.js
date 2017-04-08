@@ -30,7 +30,6 @@ class BroadCastingServer extends WebSocketServer
     var messageFilter = (client) => {
       if (
         client.newsSource != undefined
-        && this.config.newsSource.sources.includes(client.newsSource)
         && client.newsSource in this.news
         && client.newsSource == this.incomingNewsSource
       ) {
