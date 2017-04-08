@@ -38,6 +38,9 @@ class BroadCastingServer extends WebSocketServer
     this.getChannel('livenews').onMessage = (message, client) => {
       if (this.config.newsSource.sources.includes(message)) {
         client.newsSource = message;
+        if (this.incomingNews.source != undefined && this.incomingNews.source == message) { //immediately sent related articles to client
+          client.send(JSON.stringify(this.incomingNews.articles));
+        }
       }
     };
 
