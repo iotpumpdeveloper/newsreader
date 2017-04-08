@@ -10,7 +10,8 @@
       "cnbc",
       "fortune",
       "espn",
-      "newsweek"
+      "newsweek",
+      "nfl-news"
     ]
   },
   "servers" : {
