@@ -20,9 +20,7 @@ class BroadCastingServer extends WebSocketServer
     super.start(); //start the web server
 
     this.news = {};
-
-    this.incomingNewsSource = '';
-
+    
     this.addChannel('livenews');
 
     var idcName = InternalDataChannelName.onServer('s0'); 
@@ -38,9 +36,7 @@ class BroadCastingServer extends WebSocketServer
 
     var webSocket = new WebSocketServerChannel(this.config.servers['s0'], idcName).connect();
     webSocket.on('message', (message) => {
-      var messageObj = JSON.parse(message);
-      this.incomingNewsSource = messageObj.source;
-      this.news[messageObj.source] = messageObj.articles;
+      this.news = JSON.parse(message);
       this.getChannel('livenews').broadcast(messageFilter);
     });
 
