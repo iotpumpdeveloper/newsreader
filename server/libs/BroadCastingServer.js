@@ -30,19 +30,32 @@ class BroadCastingServer extends WebSocketServer
         client.newsSource != undefined
         && client.newsSource in this.news
       ) {
-        return JSON.stringify(this.news[client.newsSource]); 
+        return this.news[client.newsSource]; 
       }
     }
 
     var webSocket = new WebSocketServerChannel(this.config.servers['s0'], idcName).connect();
     webSocket.on('message', (message) => {
-      this.news = JSON.parse(message);
-      this.getChannel('livenews').broadcast(messageFilter);
+      var incomingNews = JSON.parse(message);
+      var shouldBroadcast = false;
+      for (var source in incomingNews) {
+        if ( this.news[source] == undefined || this.news[source] != incomingNews[source] ) {
+          shouldBroadcast = true;
+          this.news[source] = incomingNews[source];
+        }
+      }
+
+      if (shouldBroadcast) {
+        this.getChannel('livenews').broadcast(messageFilter);
+      }
     });
 
     this.getChannel('livenews').onMessage = (message, client) => {
       if (this.config.newsSource.sources.includes(message)) {
         client.newsSource = message;
+        if (this.news[message] != undefined) {
+          client.send(this.news[message]);
+        }
       } else { //invalid news source, just close the client 
         client.close();
       }

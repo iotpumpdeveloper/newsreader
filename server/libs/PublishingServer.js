@@ -24,19 +24,20 @@ class PublishingServer extends WebSocketServer
     var config = this.config;
     var newsSources = config.newsSource.sources;
     var axios = require('axios');
+    var news =  {};
     try { 
-      var news =  {};
       for (var i = 0; i < newsSources.length; i ++) {
         var source = newsSources[i];
         var newsApiUrl = config.newsSource.apiEndPoint + '?source=' + source + '&apiKey=' + config.newsSource.apiKey;
         var response = await axios.get(newsApiUrl);
         //once we have some good data from a specific source, we just send it
-        news[source] = response.data.articles
+        news[source] = JSON.stringify(response.data.articles);
       }
-      successCallback(news);
     } catch (error) {
       console.log("News Fetching Error: " + error);
     }
+
+    successCallback(news);
   }
 
   getLatestNews()
