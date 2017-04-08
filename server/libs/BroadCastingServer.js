@@ -37,12 +37,13 @@ class BroadCastingServer extends WebSocketServer
     var webSocket = new WebSocketServerChannel(this.config.servers['s0'], idcName).connect();
     webSocket.on('message', (message) => {
       var incomingNews = JSON.parse(message);
+     
       var shouldBroadcast = false;
       for (var source in incomingNews) {
         if ( this.news[source] == undefined || this.news[source] != incomingNews[source] ) {
-          shouldBroadcast = true;
           this.news[source] = incomingNews[source];
-        }
+          shouldBroadcast = true;
+        } 
       }
 
       if (shouldBroadcast) {
