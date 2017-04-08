@@ -17,6 +17,8 @@ class BroadCastingServer extends WebSocketServer
 
   start()
   {
+    super.start(); //start the web server
+
     this.addChannel('livenews');
 
     var idcName = InternalDataChannelName.onServer('s0'); 
@@ -26,11 +28,10 @@ class BroadCastingServer extends WebSocketServer
       this.getChannel('livenews').broadcast(message);
     });
 
-    //we should not allow any client send message to this channel
+    //do not allow client sent any message to the livenews channel
     this.getChannel('livenews').onMessage = (message, client) => {
-      client.close(); 
+      client.close();
     };
 
-    super.start(); //start the web server
   }
 }

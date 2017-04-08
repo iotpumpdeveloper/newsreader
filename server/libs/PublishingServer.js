@@ -48,6 +48,9 @@ class PublishingServer extends WebSocketServer
 
   start() 
   {
+    //start the server
+    super.start();
+
     var config = this.config;
     //start publishing to the broadcasting server 
     var channel = "latestnews";
@@ -57,7 +60,5 @@ class PublishingServer extends WebSocketServer
       });
     }, config.newsSource.updateInterval);
 
-    //now start as a websocket server
-    super.start();
   }
 }
