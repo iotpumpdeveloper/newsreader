@@ -1,24 +1,23 @@
 /**
  * An Internal Data Channel is a unique channel for an internal server to send and receive data from another internal server
- * Usage: InternalDataChannel.forServer('s1').getName()
  */
 const EncryptionUtil = require('./EncryptionUtil');
-const WebSocketServerChannel = require('./WebSocketServerChannel');
+const Config = require('./Config');
 
 module.exports = 
-class InternalDataChannel extends WebSocketServerChannel
+class InternalDataChannelName 
 {
-
-  constructor(serverName)
+  static onServer(serverName)
   {
-    var config = require('./Config').get();
+    var config = Config.get();
     var serverInfo = config.servers[serverName];
     serverInfo.name = serverName;
+    serverInfo.secretKey = config.servers[serverName].secretKey;
 
     var channelName = EncryptionUtil.get_sha512(
       JSON.stringify(serverInfo)
     );
 
-    super(serverName, channelName);
+    return channelName;
   }
 }

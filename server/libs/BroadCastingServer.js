@@ -1,11 +1,18 @@
 const WebSocketServer = require('./WebSocketServer');
+const WebSocketServerChannel = require('./WebSocketServerChannel');
+const Config = require('./Config');
+const InternalDataChannelName = require('./InternalDataChannelName');
 
 module.exports = 
 class BroadCastingServer extends WebSocketServer
 {
   constructor(serverName)
   {
-    super(serverName);
+    var config = Config.get();
+   
+    super(config.servers[serverName]);
+
+    this.config = config;
   }
 
   start()
@@ -15,20 +22,19 @@ class BroadCastingServer extends WebSocketServer
 
     this.addChannel('latestnews');
 
-    var thisServer = this;
-
-    var webSocket = this.connectToIDCOnServer('s0');
+    var idcName = InternalDataChannelName.onServer('s0'); 
+    var webSocket = new WebSocketServerChannel(this.config.servers['s0'], idcName).connect();
     webSocket.on('message', (message) => {
       var messageObj = JSON.parse(message);
       //instead of broadcasting the news to all clients, we just store them in memory
       //this.getChannel('latestnews').broadcast(message);
-      thisServer.news[messageObj.source] = messageObj.articles;
+      this.news[messageObj.source] = messageObj.articles;
     });
 
     this.getChannel('latestnews').onMessage = (message, client) => {
      if (client.readyState == client.OPEN) {
-      if (thisServer.news[message] != undefined) {
-          client.send(JSON.stringify(thisServer.news[message])); 
+      if (this.news[message] != undefined) {
+          client.send(JSON.stringify(this.news[message])); 
         }
       }
     }
