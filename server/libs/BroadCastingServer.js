@@ -22,15 +22,23 @@ class BroadCastingServer extends WebSocketServer
     this.addChannel('livenews');
 
     var idcName = InternalDataChannelName.onServer('s0'); 
+
+    var messageFilter = (client) => {
+      if (client.newsSource != undefined && client.newsSource == this.incomingNews.source) {
+        return JSON.stringify(this.incomingNews.articles); 
+      } 
+    }
+
     var webSocket = new WebSocketServerChannel(this.config.servers['s0'], idcName).connect();
     webSocket.on('message', (message) => {
-      var messageObj = JSON.parse(message);
-      this.getChannel('livenews').broadcast(message);
+      this.incomingNews = JSON.parse(message);
+      this.getChannel('livenews').broadcast(messageFilter);
     });
 
-    //do not allow client sent any message to the livenews channel
     this.getChannel('livenews').onMessage = (message, client) => {
-      client.close();
+      if (this.config.newsSource.sources.includes(message)) {
+        client.newsSource = message;
+      }
     };
 
   }

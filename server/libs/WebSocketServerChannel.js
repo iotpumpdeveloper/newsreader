@@ -38,7 +38,15 @@ class WebSocketServerChannel
       var client = this.connectedClients.pop();
       if (client.readyState == client.OPEN) { //this is still an active client, send the news data and then put it back
         this.connectedClients.unshift(client); //add this client in the beginning of the array 
-        client.send(message);
+        //now the message can either be a string or a function that return custom message!
+        if (typeof message == 'string') {
+          client.send(message);
+        } else if (typeof message == 'function') {
+          var message = message(client);
+          if (typeof message == 'string') {
+            client.send(message);
+          }
+        }
       } 
       //otherwise, the client will just be pop out and garbage collected
     }

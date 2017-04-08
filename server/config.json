@@ -6,7 +6,11 @@
     "sources" : [
       "hacker-news", 
       "cnn",
-      "techcrunch"
+      "techcrunch",
+      "cnbc",
+      "fortune",
+      "espn",
+      "newsweek"
     ]
   },
   "servers" : {
