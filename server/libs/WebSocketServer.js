@@ -24,7 +24,10 @@ class WebSocketServer
 
   addChannel(channelName)
   {
-    var channel = new WebSocketServerChannel(this.serverName, channelName);
+    var channel = new WebSocketServerChannel({
+      'host' : this.host,
+      'port' : this.port
+    }, channelName);
     this.channels[channelName] = channel;
   }
 

@@ -17,27 +17,19 @@ class BroadCastingServer extends WebSocketServer
 
   start()
   {
-    //store news from all sources in memory 
-    this.news = {};
-
-    this.addChannel('latestnews');
+    this.addChannel('livenews');
 
     var idcName = InternalDataChannelName.onServer('s0'); 
     var webSocket = new WebSocketServerChannel(this.config.servers['s0'], idcName).connect();
     webSocket.on('message', (message) => {
       var messageObj = JSON.parse(message);
-      //instead of broadcasting the news to all clients, we just store them in memory
-      //this.getChannel('latestnews').broadcast(message);
-      this.news[messageObj.source] = messageObj.articles;
+      this.getChannel('livenews').broadcast(message);
     });
 
-    this.getChannel('latestnews').onMessage = (message, client) => {
-     if (client.readyState == client.OPEN) {
-      if (this.news[message] != undefined) {
-          client.send(JSON.stringify(this.news[message])); 
-        }
-      }
-    }
+    //we should not allow any client send message to this channel
+    this.getChannel('livenews').onMessage = (message, client) => {
+      client.close(); 
+    };
 
     super.start(); //start the web server
   }
