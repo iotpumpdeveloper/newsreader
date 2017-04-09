@@ -46,8 +46,6 @@ class PublishingServer extends WebSocketServer
   {
     var config = this.config;
     
-    var incomingNews = "";
-
     //we will first have the internal data path (idp)
     var idpName = InternalDataPathName.onServer(this.serverName); 
 
@@ -56,7 +54,7 @@ class PublishingServer extends WebSocketServer
     //start publishing to the broadcasting servers
     setInterval( () => {
       this.fetchLatestNews((news) => {
-        this.getPath(idpName).broadcast(JSON.stringify(news)); 
+        this.getPath(idpName).getDefaultChannel().broadcast(JSON.stringify(news)); 
       });
     }, config.newsSource.updateInterval);
 

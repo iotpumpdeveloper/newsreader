@@ -11,15 +11,18 @@ class Path
     this.path = path;
     this.options = options;
 
+    //all channels
+    this.channels = {};
+
     //add the default channel 
-    this.defaultChannelName = 'default_channle_' + Date.now();
-    this.defaultChannel = new Channel(this.defaultChannelName); 
+    this.defaultChannelName = 'default_channel_' + Date.now();
+    this.channels[this.defaultChannelName] = new Channel(this.defaultChannelName); 
   }
 
   addConnectedClient(client)
   {
     //add the client to the default channel 
-    this.getChannel(this.defaultChannelName).addClient(client);
+    this.getDefaultChannel().addClient(client);
   }
 
   addChannel(name)
@@ -35,13 +38,13 @@ class Path
     }
   }
 
+  getDefaultChannel()
+  {
+    return this.channels[this.defaultChannelName];
+  }
+
   getChannel(name)
   {
     return this.channels[name];
-  }
-
-  broadcast(message)
-  {
-    this.defaultChannel.broadcast(message);
   }
 }

@@ -20,10 +20,11 @@ class BroadCastingServer extends WebSocketServer
   {
     super.start(); //start the web server
 
-    this.addPath('livenews');
+    this.addPath('/livenews');
+    var liveNewsPath = this.getPath('/livenews');
 
-    for (var i =0; i < this.config.newsSource.sources.length; i ++){
-      this.addMessageChannel(this.config.newsSource.sources[i]); 
+    for (var i in this.config.newsSource.sources){
+      liveNewsPath.addChannel(this.config.newsSource.sources[i]); 
     }
 
     var idpName = InternalDataPathName.onServer('s0'); 
@@ -31,13 +32,12 @@ class BroadCastingServer extends WebSocketServer
     var webSocket = new WebSocketClient(this.config.servers['s0'], idpName).connect();
     webSocket.on('message', (message) => {
       var messageObj = JSON.parse(message);
-      this.messageChannels[messageObj.source].broadcast(JSON.stringify(messageObj.data));
+      liveNewsPath.getChannel(messageObj.source).broadcast(JSON.stringify(messageObj.data));
     });
 
-    this.getPath('livenews').getDefaultChannel().onMessage = (message, client) => {
-      //now group message in message channel 
-      if (message in this.messageChannels) {
-        this.messageChannels[message].addClient(client);
+    liveNewsPath.getDefaultChannel().onMessage = (message, client) => {
+      if (liveNewsPath.getChannel(message) != undefined) {
+        liveNewsPath.getChannel(message).addClient(client);
       } else { 
         client.close();
       }

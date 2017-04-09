@@ -2,7 +2,7 @@
  * This is a general websocket server
  */
 const ws = require('ws');
-const Channel = require('./Channel');
+const Path = require('./Path');
 
 module.exports=
 class WebSocketServer
@@ -17,14 +17,11 @@ class WebSocketServer
 
     //all the paths are here 
     this.paths = {};
-
-    //all the channels are here
-    this.channels = {};
   }
 
-  addPath(path, handler, options)
+  addPath(path, options)
   {
-    this.paths[path] = new Path(path, handler, options);
+    this.paths[path] = new Path(path, options);
   }
 
   getPath(path)
@@ -44,8 +41,6 @@ class WebSocketServer
     });
 
     this._serverInstance.on('connection', (client) => {
-      //initialize messageChannel property 
-      client.messageChannel = ''; //default is an empty channel
       var path = client.upgradeReq.url;
       if (path in this.paths && client.readyState == client.OPEN) {
         this.paths[path].addConnectedClient(client);

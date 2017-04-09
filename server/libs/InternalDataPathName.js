@@ -14,10 +14,10 @@ class InternalDataPathName
     serverInfo.name = serverName;
     serverInfo.secretKey = config.servers[serverName].secretKey;
 
-    var channelName = EncryptionUtil.get_sha512(
+    var pathName = '/' + EncryptionUtil.get_sha512(
       JSON.stringify(serverInfo)
     );
 
-    return channelName;
+    return pathName;
   }
 }

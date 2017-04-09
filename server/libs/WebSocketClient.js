@@ -14,9 +14,8 @@ class WebSocketClient
     var wsUrl = 'ws://' + this.serverInfo.host 
       + ':' 
       + this.serverInfo.port 
-      + '/'
-      + this.channelName;
-
+      + this.path;
+    
     var webSocket = new ws(wsUrl, {
       perMessageDeflate: false
     });
