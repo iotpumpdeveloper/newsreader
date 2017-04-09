@@ -1,6 +1,6 @@
 const WebSocketServer = require('./WebSocketServer');
 const Config = require('./Config');
-const InternalDataChannelName = require('./InternalDataChannelName');
+const InternalDataPathName = require('./InternalDataPathName');
 
 module.exports=
 class PublishingServer extends WebSocketServer
@@ -12,12 +12,7 @@ class PublishingServer extends WebSocketServer
     super(config.servers[serverName]);
 
     this.config = config;
-
-    //we will first have the internal data channel (idc)
-    this.idcName = InternalDataChannelName.onServer(serverName); 
-
-    //now add the idc to the channels 
-    this.addChannel(this.idcName);
+    this.serverName = serverName;
   }
 
   async fetchLatestNews(successCallback) {
@@ -49,17 +44,24 @@ class PublishingServer extends WebSocketServer
 
   start() 
   {
-    //start the server
-    super.start();
-
     var config = this.config;
-    //start publishing to the broadcasting server 
-    var channel = "latestnews";
+    
+    var incomingNews = "";
+
+    //we will first have the internal data path (idp)
+    var idpName = InternalDataPathName.onServer(this.serverName); 
+
+    this.addPath(idpName);
+
+    //start publishing to the broadcasting servers
     setInterval( () => {
       this.fetchLatestNews((news) => {
-        this.getChannel(this.idcName).broadcast(JSON.stringify(news));
+        this.getPath(idpName).broadcast(JSON.stringify(news)); 
       });
     }, config.newsSource.updateInterval);
 
+
+    //start the server
+    super.start();
   }
 }

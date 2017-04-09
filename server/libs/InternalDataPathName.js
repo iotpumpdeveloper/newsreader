@@ -5,7 +5,7 @@ const EncryptionUtil = require('./EncryptionUtil');
 const Config = require('./Config');
 
 module.exports = 
-class InternalDataChannelName 
+class InternalDataPathName
 {
   static onServer(serverName)
   {

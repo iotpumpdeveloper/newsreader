@@ -14,6 +14,10 @@ class Channel
   {
     client.channel = this.name; //very important
     this.clients.push(client);
+    //hook up the client's message event 
+    client.on('message', (message) => {
+      this.onMessage(message, client);
+    }); 
   }
 
   broadcast(message)
@@ -21,9 +25,9 @@ class Channel
     for (var i = 0; i < this.clients.length; i ++) {
       var client = this.clients.pop();
       if (
-      client.readyState == client.OPEN  //this client is still open
-      && client.channel != undefined 
-      && client.channel == this.name //this client is still under this channel
+        client.readyState == client.OPEN  //this client is still open
+        && client.channel != undefined 
+        && client.channel == this.name //this client is still under this channel
       ) { 
         this.clients.unshift(client); //add this client back to this channel 
         //now the message can either be a string or a function that return custom message!

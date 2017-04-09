@@ -2,7 +2,6 @@
  * This is a general websocket server
  */
 const ws = require('ws');
-const WebSocketServerChannel = require('./WebSocketServerChannel');
 const Channel = require('./Channel');
 
 module.exports=
@@ -16,18 +15,21 @@ class WebSocketServer
     this.host = serverInfo.host;
     this.port = serverInfo.port;
 
+    //all the paths are here 
+    this.paths = {};
+
     //all the channels are here
     this.channels = {};
   }
 
-  addChannel(name)
+  addPath(path, handler, options)
   {
-    this.channels[name] = new Channel(name);
+    this.paths[path] = new Path(path, handler, options);
   }
 
-  getChannel(name)
+  getPath(path)
   {
-    return this.channels[name];
+    return this.paths[path];
   }
 
   /**
@@ -44,17 +46,12 @@ class WebSocketServer
     this._serverInstance.on('connection', (client) => {
       //initialize messageChannel property 
       client.messageChannel = ''; //default is an empty channel
-      var clientChannelName = client.upgradeReq.url.slice(1);
-      if (clientChannelName in this.channels && client.readyState == client.OPEN) {
-        this.channels[clientChannelName].addConnectedClient(client);
-        this.channels[clientChannelName].onClientConnected(client);
+      var path = client.upgradeReq.url;
+      if (path in this.paths && client.readyState == client.OPEN) {
+        this.paths[path].addConnectedClient(client);
       } else { //all other clients are considered invalid, we just close them
         client.close(); 
       }
-    });
-
-    this._serverInstance.on('message', (message) => {
-      this.onMessage(message);
     });
   }
 
