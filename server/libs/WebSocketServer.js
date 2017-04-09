@@ -3,7 +3,7 @@
  */
 const ws = require('ws');
 const WebSocketServerChannel = require('./WebSocketServerChannel');
-const MessageChannel = require('./MessageChannel');
+const Channel = require('./Channel');
 
 module.exports=
 class WebSocketServer
@@ -18,33 +18,16 @@ class WebSocketServer
 
     //all the channels are here
     this.channels = {};
-
-    //all message channels are here 
-    this.messageChannels = {};
   }
 
-  addChannel(channelName)
+  addChannel(name)
   {
-    var channel = new WebSocketServerChannel({
-      'host' : this.host,
-      'port' : this.port
-    }, channelName);
-    this.channels[channelName] = channel;
+    this.channels[name] = new Channel(name);
   }
 
   getChannel(name)
   {
     return this.channels[name];
-  }
-
-  addMessageChannel(name)
-  {
-    this.messageChannels[name] = new MessageChannel(name);
-  }
-
-  getMessageChannel(name)
-  {
-    return this.messageChannels[name];
   }
 
   /**
