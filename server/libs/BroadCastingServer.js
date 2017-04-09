@@ -39,6 +39,8 @@ class BroadCastingServer extends WebSocketServer
       //now group message in message channel 
       if (message in this.messageChannels) {
         this.messageChannels[message].addClient(client);
+      } else { 
+        client.close();
       }
     }
 
