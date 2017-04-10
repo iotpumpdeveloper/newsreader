@@ -27,4 +27,9 @@ class WebSocketClient
 
     return webSocket;
   }
+
+  static bindToWebSocket(webSocket)
+  {
+    return webSocket;
+  }
 }

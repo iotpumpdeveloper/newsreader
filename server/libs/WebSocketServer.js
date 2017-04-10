@@ -3,6 +3,7 @@
  */
 const ws = require('ws');
 const Path = require('./Path');
+const WebSocketClient = require('./WebSocketClient');
 
 module.exports=
 class WebSocketServer
@@ -43,7 +44,7 @@ class WebSocketServer
     this._serverInstance.on('connection', (client) => {
       var path = client.upgradeReq.url;
       if (path in this.paths && client.readyState == client.OPEN) {
-        this.paths[path].addConnectedClient(client);
+        this.paths[path].addConnectedClient(WebSocketClient.bindToWebSocket(client));
       } else { //all other clients are considered invalid, we just close them
         client.close(); 
       }
