@@ -8,6 +8,7 @@ class Channel
   {
     this.name = name;
     this.clients = {};
+    this.onMessage = (message, client) => {};
   }
 
   addClient(client)
@@ -18,11 +19,6 @@ class Channel
     client.on('message', (message) => {
       this.onMessage(message, client);
     }); 
-    client.on('close', () => {
-      if (this.clients[client.id] != undefined) {
-        delete this.clients[client.id];
-      }
-    });
   }
 
   broadcast(message)
@@ -30,7 +26,8 @@ class Channel
     for (var clientId in this.clients) {
       var client = this.clients[clientId];
       if (
-        client.readyState == client.OPEN  //this client is still open
+        client != undefined
+        && client.readyState == client.OPEN  //this client is still open
         && client.channel != undefined 
         && client.channel == this.name //this client is still under this channel
       ) { 
@@ -44,7 +41,7 @@ class Channel
           } 
         }
       } else { //this client no longer belong to this channel, delete it
-        delete this.clients[clientId];
+        //this.clients[clientId] = null;
       }
     }
 
