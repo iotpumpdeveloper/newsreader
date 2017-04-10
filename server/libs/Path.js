@@ -23,7 +23,7 @@ class Path
   addConnectedClient(client)
   {
     client.id = shortid.generate();
-    client.path = this.path;
+    client.path = this;
     //add the client to the default channel 
     this.getDefaultChannel().addClient(client);
   }

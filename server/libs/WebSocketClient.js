@@ -1,5 +1,10 @@
 const ws = require('ws');
 
+//add new methods to ws prototype 
+ws.prototype.switchToChannel = function(channelName){
+  this.path.getChannel(channelName).addClient(this);
+}
+
 module.exports = 
 class WebSocketClient
 {

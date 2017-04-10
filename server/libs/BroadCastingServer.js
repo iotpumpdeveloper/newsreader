@@ -37,7 +37,7 @@ class BroadCastingServer extends WebSocketServer
 
     liveNewsPath.getDefaultChannel().onMessage = (message, client) => {
       if (liveNewsPath.getChannel(message) != undefined) {
-        liveNewsPath.getChannel(message).addClient(client);
+        client.switchToChannel(message);
       } else { 
         client.close();
       }
