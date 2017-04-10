@@ -41,7 +41,7 @@ class Channel
           } 
         }
       } else { //this client no longer belong to this channel, delete it
-        //this.clients[clientId] = null;
+        delete this.clients[clientId];
       }
     }
 
