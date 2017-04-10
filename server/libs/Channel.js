@@ -31,15 +31,7 @@ class Channel
         && client.channel != undefined 
         && client.channel == this.name //this client is still under this channel
       ) { 
-        //now the message can either be a string or a function that return custom message!
-        if (typeof message == 'string') {
-          client.send(message);
-        } else if (typeof message == 'function') {
-          var message = message(client);
-          if (typeof message == 'string') {
-            client.send(message);
-          } 
-        }
+        client.send(message);
       } else { //this client no longer belong to this channel, delete it
         delete this.clients[clientId];
       }
