@@ -48,20 +48,34 @@ class PublishingServer extends WebSocketServer
   {
     var config = this.config;
 
-    var broadcastingPath = new Path('broadcastingPath');
-
-    for (var serverName in config.servers) {
-      if (serverName != this.serverName) { //broadcasting servers
-        var webSocket = new WebSocketClient(config.servers[serverName], InternalDataPathName.onServer(serverName) ).connect();
-        webSocket.on('error', ()=> {});
-        broadcastingPath.addConnectedClient(webSocket);
+    //maintain a list of web sockets connecting to each broadcasting server's idp
+    //and keep them alived
+    var broadcastors = [];
+    var noop = () => {};
+    setInterval( ()=> {
+      for (var serverName in config.servers) {
+        if (serverName != this.serverName) { //broadcasting servers 
+          if (broadcastors[serverName] == undefined 
+            || broadcastors[serverName].readyState == 3) {
+            broadcastors[serverName] = new WebSocketClient(
+              config.servers[serverName], 
+              InternalDataPathName.onServer(serverName)
+            ).connect();
+            broadcastors[serverName].on('error', noop);
+          }
+        }
       }
-    }
+    }, 5000);
 
     //start publishing to the broadcasting servers
     setInterval( () => {
       this.fetchLatestNews((news) => {
-        broadcastingPath.getDefaultChannel().broadcast(JSON.stringify(news)); 
+        for (var name in broadcastors) {
+          if (broadcastors[name] != undefined 
+            && broadcastors[name].readyState == 1) {
+            broadcastors[name].send(JSON.stringify(news));
+          }
+        }
       });
     }, config.newsSource.updateInterval);
 

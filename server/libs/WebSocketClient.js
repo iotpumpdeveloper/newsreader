@@ -14,17 +14,18 @@ class WebSocketClient
     this.path = path;
   }
 
-  connect()
+  connect(options = {})
   {
+    var webSocket;
     var wsUrl = 'ws://' + this.serverInfo.host 
       + ':' 
       + this.serverInfo.port 
       + this.path;
-    
-    var webSocket = new ws(wsUrl, {
+
+    webSocket = new ws(wsUrl, {
       perMessageDeflate: false
     });
-
+  
     return webSocket;
   }
 
