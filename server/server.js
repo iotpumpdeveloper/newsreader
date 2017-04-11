@@ -7,12 +7,17 @@ if (args.length < 3) {
   process.exit();
 }
 
+try {
+  process.chdir(__dirname);
+} catch(error){
+  console.log(error);
+  process.exit();
+}
+
 var Config = require('./libs/Config');
 Config.init('./config.json');
 
 var serverName = args[2].trim();
-
-//@TODO: maybe later on we can start the servers in the background... 
 
 var config = Config.get();
 
