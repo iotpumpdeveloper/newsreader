@@ -25,7 +25,6 @@ class Channel
   {
     for (var clientId in this.clients) {
       var client = this.clients[clientId];
-      console.log(client);
       if (
         client != undefined
         && client.readyState == client.OPEN  //this client is still open
