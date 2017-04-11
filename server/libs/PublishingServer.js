@@ -52,8 +52,7 @@ class PublishingServer extends WebSocketServer
 
     for (var serverName in config.servers) {
       if (serverName != this.serverName) { //broadcasting servers
-        console.log(serverName);
-        var webSocket = new WebSocketClient(serverName, InternalDataPathName.onServer(serverName) ).connect();
+        var webSocket = new WebSocketClient(config.servers[serverName], InternalDataPathName.onServer(serverName) ).connect();
         webSocket.on('error', ()=> {});
         broadcastingPath.addConnectedClient(webSocket);
       }

@@ -25,12 +25,13 @@ class Channel
   {
     for (var clientId in this.clients) {
       var client = this.clients[clientId];
+      console.log(client);
       if (
         client != undefined
         && client.readyState == client.OPEN  //this client is still open
         && client.channel != undefined 
         && client.channel == this.name //this client is still under this channel
-      ) { 
+      ) {
         client.send(message);
       } else { //this client no longer belong to this channel, delete it
         delete this.clients[clientId];
