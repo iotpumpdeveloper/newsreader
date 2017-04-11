@@ -44,10 +44,11 @@ class BroadCastingServer extends WebSocketServer
 
     var idp = this.getPath(idpName);
 
-    idp.on('message', (message) => { //now there is incoming message on idp of this server
+    idp.getDefaultChannel().onMessage = (message) => { //now there is incoming message on idp of this server
       var messageObj = JSON.parse(message);
+      console.log(messageObj);
       liveNewsPath.getChannel(messageObj.source).broadcast(JSON.stringify(messageObj.data));
-    });
+    }
 
 
   }

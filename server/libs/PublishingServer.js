@@ -1,6 +1,8 @@
 const WebSocketServer = require('./WebSocketServer');
-const Config = require('./Config');
+const WebSocketClient = require('./WebSocketClient');
 const InternalDataPathName = require('./InternalDataPathName');
+const Path = require('./Path');
+const Config = require('./Config');
 
 module.exports=
 class PublishingServer extends WebSocketServer
@@ -49,16 +51,18 @@ class PublishingServer extends WebSocketServer
     var broadcastingPath = new Path('broadcastingPath');
 
     for (var serverName in config.servers) {
-      
+      if (serverName != this.serverName) { //broadcasting servers
+        console.log(serverName);
+        var webSocket = new WebSocketClient(serverName, InternalDataPathName.onServer(serverName) ).connect();
+        webSocket.on('error', ()=> {});
+        broadcastingPath.addConnectedClient(webSocket);
+      }
     }
 
     //start publishing to the broadcasting servers
     setInterval( () => {
       this.fetchLatestNews((news) => {
-
-        
-
-        this.getPath(idpName).getDefaultChannel().broadcast(JSON.stringify(news)); 
+        broadcastingPath.getDefaultChannel().broadcast(JSON.stringify(news)); 
       });
     }, config.newsSource.updateInterval);
 
