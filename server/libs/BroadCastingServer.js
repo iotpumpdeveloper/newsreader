@@ -45,7 +45,6 @@ class BroadCastingServer extends WebSocketServer
     var idp = this.getPath(idpName);
 
     idp.getDefaultChannel().onMessage = (message) => { //now there is incoming message on idp of this server
-      console.log(message);
       var messageObj = JSON.parse(message);
       liveNewsPath.getChannel(messageObj.source).broadcast(JSON.stringify(messageObj.data));
     }
