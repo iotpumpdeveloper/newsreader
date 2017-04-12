@@ -94,6 +94,7 @@ export default {
     switchToNewsSource (source, evt) {
       this.news_loading = 1;
       this.currentNewsSource = source;
+      this.currentArticleUrl = '';
       getCurrentWebSocket().send(source); 
     },
     classForKey (key) {
