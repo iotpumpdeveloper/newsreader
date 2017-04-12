@@ -66,6 +66,9 @@ export default {
         'hacker-news' : 'Hacker News',
         'techcrunch' : 'Tech Crunch',
         'time' : 'Times',
+        'fortune' : 'Fortune',
+        'new-scientist' : 'New Scientist',
+        'espn' : 'ESPN',
       }
     }
   },
