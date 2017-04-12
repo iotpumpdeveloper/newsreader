@@ -58,7 +58,7 @@ export default {
 
   data () {
     return {
-      'currentNewsSource' : 'cnn',
+      'currentNewsSource' : '',
       'news' : {},
       'news_loading' : 0, //see if the news is loading
       'newsSources' : {
@@ -100,7 +100,7 @@ export default {
     setInterval( getWebSocket, 1000); 
 
     ws.onopen = () => {
-      ws.send(this.currentNewsSource);
+      ws.send(Object.keys(this.newsSources)[0]);
     }
   }
 }
