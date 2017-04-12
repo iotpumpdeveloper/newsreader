@@ -31,10 +31,13 @@ ul#news-list li {
       <li><button @click="switchToNewsSource('techcrunch')">Tech Crunch</button></li>
       <li><button @click="switchToNewsSource('google-news')">Google News</button></li>
       <li><button @click="switchToNewsSource('new-scientist')">News Scientist</button></li>
+      <li><button @click="switchToNewsSource('time')">Times</button></li>
+      <li><button @click="switchToNewsSource('newsweek')">News Week</button></li>
+      <li><button @click="switchToNewsSource('usa-today')">USA Today</button></li>
     </ul>
     <ul id="news-list">
       <li v-for = "article, i in news">
-        <a v-bind:href="article.url" target= '_blank'>{{ article.title }}</a>
+        <a :href="article.url" target= '_blank'>{{ article.title }}</a>
       </li>
     </ul>
   </div>
