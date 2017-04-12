@@ -5,10 +5,17 @@ ul#news-sources li {
   margin-bottom: 20px;
 }
 
+ul#news-sources li button {
+  font-family: courier;
+  font-size: 10px;
+}
+
 ul#news-sources li button.active {
+  font-weight: bold;
   border: 2px silver solid;
   background: lightYellow;
 }
+
 
 ul#news-list{
   display: block;
@@ -19,6 +26,11 @@ ul#news-list{
 ul#news-list li {
   margin-top: 5px;
   margin-bottom: 5px;
+}
+
+ul#news-list li a {
+  font-family: courier;
+  font-size: 10px;
 }
 
 iframe#article-viewer {
