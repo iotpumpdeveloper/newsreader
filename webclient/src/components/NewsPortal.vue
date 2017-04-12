@@ -20,21 +20,33 @@ ul#news-list li {
   margin-top: 5px;
   margin-bottom: 5px;
 }
+
+iframe#article-viewer {
+  width: 1000px;
+  height: 600px;
+  overflow-x: hidden; 
+  overflow-y: scroll;
+}
+
 </style>
 
 <template>
   <div id="news-portal">
     <ul id="news-sources">
-      <li v-for='value, key in newsSources'>
+      <li v-for="value, key in newsSources">
         <button @click="switchToNewsSource(key)" v-bind:class="classForKey(key)">{{ value }}</button>
       </li>
     </ul>
     <p style = "clear:left" v-if = "news_loading == 1">Loading {{ newsSources[currentNewsSource] }} ...</p>
     <ul id="news-list" v-if="news_loading == 0">
       <li v-for = "article, i in news">
-        <a :href="article.url" target= '_blank'>{{ article.title }}</a>
+        <a :href="article.url" target= '_blank' @click.prevent ='viewArticle(article.url)'>{{ article.title }}</a>
       </li>
     </ul>
+    <iframe id = "article-viewer" 
+      v-bind:src="currentArticleUrl" 
+      v-if = "currentArticleUrl.length > 0">
+    </iframe>
   </div>
 </template>
 
@@ -70,7 +82,11 @@ export default {
         'fortune' : 'Fortune',
         'new-scientist' : 'New Scientist',
         'espn' : 'ESPN',
-      }
+        'business-insider' : 'Business Insider',
+        'financial-times' : 'Financial Times',
+        'ign' : 'IGN',
+      },
+      'currentArticleUrl' : '',
     }
   },
 
@@ -80,12 +96,15 @@ export default {
       this.currentNewsSource = source;
       getCurrentWebSocket().send(source); 
     },
-    classForKey : function(key) {
+    classForKey (key) {
       if (this.currentNewsSource == key) {
         return 'active';
       } else {
         return 'inactive';
       }
+    },
+    viewArticle (url, event) {
+      this.currentArticleUrl = url;
     }
   },
 
