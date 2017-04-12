@@ -98,6 +98,10 @@ export default {
     getWebSocket();
     //try to keep the websocket alive
     setInterval( getWebSocket, 1000); 
+
+    ws.onopen = () => {
+      ws.send(this.currentNewsSource);
+    }
   }
 }
   </script>
