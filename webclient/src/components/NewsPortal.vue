@@ -1,14 +1,13 @@
 <style>
-ul#news-list {
-  clear: left;
-  display: block;
-  margin-bottom: 20px;
-}
-
 ul#news-sources li {
   list-style-type: none;
   float: left;
   margin-bottom: 20px;
+}
+
+ul#news-sources li button.active {
+  border: 2px silver solid;
+  background: lightYellow;
 }
 
 ul#news-list{
@@ -26,9 +25,11 @@ ul#news-list li {
 <template>
   <div id="news-portal">
     <ul id="news-sources">
-      <li v-for='value, key in newsSources'><button @click="switchToNewsSource(key)">{{ value }}</button></li>
+      <li v-for='value, key in newsSources'>
+        <button @click="switchToNewsSource(key)" v-bind:class="classForKey(key)">{{ value }}</button>
+      </li>
     </ul>
-    <p style = "clear:left" v-if = "news_loading == 1">Loading {{ currentNewsSource }} ...</p>
+    <p style = "clear:left" v-if = "news_loading == 1">Loading {{ newsSources[currentNewsSource] }} ...</p>
     <ul id="news-list" v-if="news_loading == 0">
       <li v-for = "article, i in news">
         <a :href="article.url" target= '_blank'>{{ article.title }}</a>
@@ -74,10 +75,17 @@ export default {
   },
 
   methods: {
-    switchToNewsSource (source) {
+    switchToNewsSource (source, evt) {
       this.news_loading = 1;
-      this.currentNewsSource = this.newsSources[source];
+      this.currentNewsSource = source;
       getCurrentWebSocket().send(source); 
+    },
+    classForKey : function(key) {
+      if (this.currentNewsSource == key) {
+        return 'active';
+      } else {
+        return 'inactive';
+      }
     }
   },
 
@@ -99,8 +107,9 @@ export default {
     //try to keep the websocket alive
     setInterval( getWebSocket, 1000); 
 
+    this.currentNewsSource = Object.keys(this.newsSources)[0];
     ws.onopen = () => {
-      ws.send(Object.keys(this.newsSources)[0]);
+      ws.send(this.currentNewsSource);
     }
   }
 }
