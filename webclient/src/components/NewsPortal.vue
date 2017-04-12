@@ -26,16 +26,10 @@ ul#news-list li {
 <template>
   <div id="news-portal">
     <ul id="news-sources">
-      <li><button @click="switchToNewsSource('cnn')">CNN</button></li>
-      <li><button @click="switchToNewsSource('hacker-news')">Hacker News</button></li>
-      <li><button @click="switchToNewsSource('techcrunch')">Tech Crunch</button></li>
-      <li><button @click="switchToNewsSource('google-news')">Google News</button></li>
-      <li><button @click="switchToNewsSource('new-scientist')">News Scientist</button></li>
-      <li><button @click="switchToNewsSource('time')">Times</button></li>
-      <li><button @click="switchToNewsSource('newsweek')">News Week</button></li>
-      <li><button @click="switchToNewsSource('usa-today')">USA Today</button></li>
+      <li v-for='value, key in newsSources'><button @click="switchToNewsSource(key)">{{ value }}</button></li>
     </ul>
-    <ul id="news-list">
+    <p style = "clear:left" v-if = "news_loading == 1">Loading {{ currentNewsSource }} ...</p>
+    <ul id="news-list" v-if="news_loading == 0">
       <li v-for = "article, i in news">
         <a :href="article.url" target= '_blank'>{{ article.title }}</a>
       </li>
@@ -65,12 +59,21 @@ export default {
   data () {
     return {
       'currentNewsSource' : 'cnn',
-      'news' : {}
+      'news' : {},
+      'news_loading' : 0, //see if the news is loading
+      'newsSources' : {
+        'cnn' : 'CNN',
+        'hacker-news' : 'Hacker News',
+        'techcrunch' : 'Tech Crunch',
+        'time' : 'Times',
+      }
     }
   },
 
   methods: {
-    switchToNewsSource : (source) => {
+    switchToNewsSource (source) {
+      this.news_loading = 1;
+      this.currentNewsSource = this.newsSources[source];
       getCurrentWebSocket().send(source); 
     }
   },
@@ -83,6 +86,7 @@ export default {
         ws = new WebSocket(wsUrl);
         ws.onmessage = (evt) => {
           this.news = JSON.parse(evt.data); 
+          this.news_loading = 0;
         }
         setCurrentWebSocket(ws);
       }
@@ -91,8 +95,6 @@ export default {
     getWebSocket();
     //try to keep the websocket alive
     setInterval( getWebSocket, 1000); 
-
-    console.log(this.currentNewsSource);
   }
 }
   </script>
