@@ -91,11 +91,10 @@ export default {
       this.news_loading = 1;
       this.currentNewsSource = source;
       this.currentArticleUrl = '';
-      console.log(this.$_wsFactory);
-      this.$_wsFactory.connect('/livenews', (evt) => {
+      this.$wsFactory.get('/livenews').routeMessage(source, (evt) => {
         this.news = JSON.parse(evt.data);
         this.news_loading = 0;
-      }).sendMessage(source);
+      }); 
     },
     classForKey (key) {
       if (this.currentNewsSource == key) {
