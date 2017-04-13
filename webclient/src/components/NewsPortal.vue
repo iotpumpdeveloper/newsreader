@@ -63,20 +63,46 @@ iframe#article-viewer {
 </template>
 
   <script>
-  var wsUrl = "ws://" + location.host + "/livenews";
-if (location.protocol == "https:") {
-  wsUrl = "wss://" + location.host + "/livenews";
-}
 
-var curWebSocket;
-function setCurrentWebSocket(ws)
+class WebSocketFactory
 {
-  curWebSocket = ws;
-}
+  /**
+   * open a websocket connection to path, and try it keep it alive
+   */
+  static connect(path, incomingMessageHandler) {
+    if (this._wsMap == undefined) {
+      this._wsMap = {};
+      this._intervalMap = {};
+      this._incomingMessageHandlerMap = {};
+    }
 
-function getCurrentWebSocket()
-{
-  return curWebSocket;
+    if (this._wsMap[path] == undefined) {
+      var wsUrl = "ws://" + location.host + path;
+      if (location.protocol == "https:") {
+        wsUrl = "wss://" + location.host + path;
+      }
+
+      this._incomingMessageHandlerMap[path] = incomingMessageHandler;
+      this._intervalMap[path] = () => {
+        if (this._wsMap[path] == undefined || this._wsMap[path].readyState == 3) {
+          this._wsMap[path] = new WebSocket(wsUrl);
+          this._wsMap[path].onmessage = this._incomingMessageHandlerMap[path];
+          this._wsMap[path].sendMessage = (message) => {
+            this._message = message;
+            if (this._wsMap[path].readyState == 1) {
+              this._wsMap[path].send(this._message);
+            }
+          }
+          this._wsMap[path].onopen = () => {
+            this._wsMap[path].send(this._message);
+          }
+        }
+        setInterval(this._intervalMap[path], 5000);
+      }
+      this._intervalMap[path]();
+    }
+    return this._wsMap[path];
+  }
 }
 
 export default {
@@ -103,11 +129,14 @@ export default {
   },
 
   methods: {
-    switchToNewsSource (source, evt) {
+    switchToNewsSource (source) {
       this.news_loading = 1;
       this.currentNewsSource = source;
       this.currentArticleUrl = '';
-      getCurrentWebSocket().send(source); 
+      WebSocketFactory.connect('/livenews', (evt) => {
+        this.news = JSON.parse(evt.data);
+        this.news_loading = 0;
+      }).sendMessage(source);
     },
     classForKey (key) {
       if (this.currentNewsSource == key) {
@@ -116,33 +145,14 @@ export default {
         return 'inactive';
       }
     },
-    viewArticle (url, event) {
+    viewArticle (url) {
       this.currentArticleUrl = url;
     }
   },
 
   mounted () {
-    var ws;
-
-    var getWebSocket = () => {
-      if (ws == undefined || ws.readyState == 3) {
-        ws = new WebSocket(wsUrl);
-        ws.onmessage = (evt) => {
-          this.news = JSON.parse(evt.data); 
-          this.news_loading = 0;
-        }
-        setCurrentWebSocket(ws);
-      }
-    };
-
-    getWebSocket();
-    //try to keep the websocket alive
-    setInterval( getWebSocket, 1000); 
-
     this.currentNewsSource = Object.keys(this.newsSources)[0];
-    ws.onopen = () => {
-      ws.send(this.currentNewsSource);
-    }
+    this.switchToNewsSource(this.currentNewsSource);
   }
 }
   </script>
