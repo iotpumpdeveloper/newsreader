@@ -91,8 +91,8 @@ export default {
       this.news_loading = 1;
       this.currentNewsSource = source;
       this.currentArticleUrl = '';
-      this.$wsFactory.get('/livenews').routeMessage(source, (evt) => {
-        this.news = JSON.parse(evt.data);
+      this.$wsFactory.get('/livenews').sendMessage(source, (response) => {
+        this.news = JSON.parse(response.data);
         this.news_loading = 0;
       }); 
     },
