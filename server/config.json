@@ -19,7 +19,9 @@
       "time",
       "new-scientist",
       "business-insider",
-      "ign"
+      "ign",
+      "entertainment-weekly",
+      "engadget"
     ]
   },
   "servers" : {

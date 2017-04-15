@@ -7,8 +7,7 @@
     </ul>
   </div>
   <div id="main">
-    <p style = "clear:left" v-if = "news_loading == 1">Loading {{ newsSources[currentNewsSource] }} ...</p>
-    <ul id="news-list" v-if="news_loading == 0">
+    <ul id="news-list">
       <li v-for = "article, i in news">
         <a :href="article.url" target= '_blank' @click.prevent ='viewArticle(article.url)'>{{ article.title }}</a>
       </li>

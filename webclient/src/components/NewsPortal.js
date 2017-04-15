@@ -4,7 +4,6 @@ export default {
     return {
       'currentNewsSource' : '',
       'news' : {},
-      'news_loading' : 0, //see if the news is loading
       'newsSources' : {
         'cnn' : 'CNN',
         'hacker-news' : 'Hacker News',
@@ -16,6 +15,8 @@ export default {
         'business-insider' : 'Business Insider',
         'financial-times' : 'Financial Times',
         'ign' : 'IGN',
+        'entertainment-weekly' : 'Entertainment Weekly',
+        'engadget' : 'Engadget'
       },
       'currentArticleUrl' : '',
     }
@@ -23,12 +24,15 @@ export default {
 
   methods: {
     switchToNewsSource (source) {
-      this.news_loading = 1;
+      if (this.currentNewsSource == source) { //clicking on the same source, no action 
+        return;
+      }
       this.currentNewsSource = source;
       this.currentArticleUrl = '';
+      this.news = this.$newsStorage.get(source);
       this.$wsFactory.get('/livenews').sendMessage(source, (response) => {
-        this.news = JSON.parse(response.data);
-        this.news_loading = 0;
+        this.$newsStorage.set(source, JSON.parse(response.data));
+        this.news = this.$newsStorage.get(source);
       }); 
     },
     classForKey (key) {
@@ -44,8 +48,6 @@ export default {
   },
 
   mounted () {
-    this.currentNewsSource = Object.keys(this.newsSources)[0];
-    this.switchToNewsSource(this.currentNewsSource);
+    this.switchToNewsSource(Object.keys(this.newsSources)[0]);
   }
 }
-
