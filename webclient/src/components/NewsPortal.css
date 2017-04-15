@@ -1,0 +1,45 @@
+body, 
+html {
+  margin:0;
+  padding:0;
+  color:#000;
+  background: lightYellow;
+}
+
+#wrap {
+  width:750px;
+  margin:0 auto;
+  background:#99c;
+}
+
+#nav {
+  float:left;
+  width:200px;
+  background:#9c9;
+}
+
+#nav ul li {
+  list-style-type: none;
+}
+
+#nav button {
+  border: 0;
+  margin-top: 5px;
+}
+
+#nav button.active {
+  background: lightBlue;
+}
+
+#main {
+  float: right;
+  width: 550px;
+}
+
+#main ul li {
+  list-style-type: none;
+}
+
+#main ul li {
+  margin-top: 10px;
+}

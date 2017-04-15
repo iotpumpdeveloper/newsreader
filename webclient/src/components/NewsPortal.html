@@ -1,0 +1,18 @@
+<div id="wrap">
+  <div id="nav">
+    <ul id="news-sources">
+      <li v-for="value, key in newsSources">
+        <button @click="switchToNewsSource(key)" v-bind:class="classForKey(key)">{{ value }}</button>
+      </li>
+    </ul>
+  </div>
+  <div id="main">
+    <p style = "clear:left" v-if = "news_loading == 1">Loading {{ newsSources[currentNewsSource] }} ...</p>
+    <ul id="news-list" v-if="news_loading == 0">
+      <li v-for = "article, i in news">
+        <a :href="article.url" target= '_blank' @click.prevent ='viewArticle(article.url)'>{{ article.title }}</a>
+      </li>
+    </ul>
+    <iframe id = "article-viewer" v-bind:src="currentArticleUrl" v-if = "currentArticleUrl.length > 0"></iframe>
+  </div>
+</div>
