@@ -22,6 +22,10 @@ var serverName = args[2].trim();
 var config = Config.get();
 
 if (serverName in config.servers) {
+
+  //do some global settings 
+  require('events').EventEmitter.defaultMaxListeners = 0;
+
   if (serverName == 's0') {
     var PublishingServer = require('./libs/PublishingServer');
     new PublishingServer(serverName).start();

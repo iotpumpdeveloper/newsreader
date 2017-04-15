@@ -15,10 +15,13 @@ class Channel
   {
     client.channel = this.name; //very important
     this.clients[client.id]  = client;
+  
     //hook up the client's message event 
-    client.on('message', (message) => {
+    var messageHandler = (message) => {
       this.onMessage(message, client);
-    }); 
+    }
+
+    client.on('message', messageHandler); 
   }
 
   broadcast(message)
